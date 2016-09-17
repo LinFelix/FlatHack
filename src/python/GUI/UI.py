@@ -53,9 +53,9 @@ class GUI(Frame):
     def refresh_pic(self, path1, path2, path3):
         self.leftImage = Image.open(path1)
         self.leftPhoto = ImageTk.PhotoImage(self.leftImage)
-        self.leftPicLabel = Label(image=self.leftPhoto)
+        self.leftPicLabel = Label(master=self.top, image=self.leftPhoto, height=600, width=600)
         self.leftPicLabel.image=self.leftPhoto
-        self.leftPicLabel.grid(row=6, column=0, columnspan=3, rawspan=3)
+        self.leftPicLabel.grid(row=6, column=0, columnspan=2, rowspan=2)
         #TODO
 
 
@@ -160,14 +160,14 @@ class GUI(Frame):
         # Initialization 
         self.flats_seen = [] # id of the flat seen, 0 as the first flat is seen/proposed first in initialization
          # sum of all similarities
-        self.flat_score = np.full(flat_cnt,0, dtype = 'float')
+        self.flat_score = np.full(self.flat_cnt, 0, dtype='float')
         self.proposed_flat = 0 # the first flat is proposed as no prior knowledge
 
         path1 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"0.jpg"
         path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
         path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
 
-        refresh_pic(self,path1,path2,path3)
+        self.refresh_pic(path1,path2,path3)
 
         '''
         print('User please enter if you liked the proposed flat.')
