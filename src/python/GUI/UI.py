@@ -4,7 +4,7 @@ from Tkinter import *
 
 import urllib2
 import json
-import Image
+from PIL import Image
 import cStringIO
 import photohash
 import imagehash
@@ -46,7 +46,7 @@ def update_score(flat_score, proposed_flat, flat, user_rating, sum, img_cnt):
   #      return flat_score + user_rating*sim, sum + sim
    # else
     return ( flat_score + user_rating*np.exp(-dis) ), sum + np.exp(-dis)
-    #/ (sum + sim + np.finfo(float).eps), sum + sim 
+    # (sum + sim + np.finfo(float).eps), sum + sim
 
 
 class GUI(Frame):
