@@ -54,10 +54,18 @@ class GUI(Frame):
         self.leftImage = Image.open(path1)
         self.leftPhoto = ImageTk.PhotoImage(self.leftImage)
         self.leftPicLabel = Label(master=self.top, image=self.leftPhoto, height=600, width=600)
-        self.leftPicLabel.image=self.leftPhoto
+        self.leftPicLabel.image = self.leftPhoto
         self.leftPicLabel.grid(row=6, column=0, columnspan=2, rowspan=2)
-        #TODO
-
+        self.middleImage = Image.open(path2)
+        self.middlePhoto = ImageTk.PhotoImage(self.middleImage)
+        self.middlePicLabel = Label(master=self.top, image=self.middlePhoto, height=600, width=600)
+        self.middlePicLabel.image = self.middlePhoto
+        self.middlePicLabel.grid(row=6, column=2, columnspan=2, rowspan=2)
+        self.rightImage = Image.open(path3)
+        self.rightPhoto = ImageTk.PhotoImage(self.rightImage)
+        self.rightPicLabel = Label(master=self.top, image=self.rightPhoto, height=600, width=600)
+        self.rightPicLabel.image = self.rightPhoto
+        self.rightPicLabel.grid(row=6, column=4, columnspan=2, rowspan=2)
 
     def button_push(self,user_rating):
 
@@ -73,7 +81,7 @@ class GUI(Frame):
         path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
         path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
 
-        refresh_pic(self,path1,path2,path3)
+        self.refresh_pic(path1, path2, path3)
 
     def create_top_level(self):
         # the actual window
