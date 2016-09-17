@@ -45,7 +45,7 @@ def update_score(flat_score, proposed_flat, flat, user_rating, sum, img_cnt):
  #   if(proposed_flat==0):
   #      return flat_score + user_rating*sim, sum + sim
    # else
-    return ( flat_score + user_rating*np.exp(-dis) ), sum + np.exp(-dis)
+    return flat_score + user_rating*np.exp(-0.1*dis), sum + np.exp(-0.1*dis)
     #/ (sum + sim + np.finfo(float).eps), sum + sim 
 
 
@@ -114,15 +114,11 @@ class GUI(Frame):
 
         flat_cnt = len(data["items"])
 
-        img_cnt = numpy.full((flat_cnt),0,dtype=int)
+        img_cnt = numpy.full(flat_cnt,0,dtype=int)
         for i in range(0,flat_cnt):
             img_cnt[i] = len(data["items"][i]["pictures"])
-
         '''
-
-        hashes = [[] for i in range(flat_cnt)]
-
-        for i in range(0,flat_cnt):
+        for i in range(0,flat_cnt):       
             print "flat: %d" % i
             for j in range(0,img_cnt[i]):
                 req_img = urllib2.Request(data["items"][i]["pictures"][j])
@@ -133,21 +129,17 @@ class GUI(Frame):
                 imagefile.close()
                 file = cStringIO.StringIO(img)
                 img = Image.open(file)
-                hashes[i].append(int(str(imagehash.average_hash(img)),16))
-                print "hash" + " = " + str(hashes[i][j])
+                print str(i)+"_"+str(j)
         '''
+        flat_cnt = numpy.count_nonzero(img_cnt)
+        np.delete(img_cnt,img_cnt == 0)
 
         # Initialization 
         flats_seen = [] # id of the flat seen, 0 as the first flat is seen/proposed first in initialization
         sum = np.full(flat_cnt,0, dtype = 'float')
          # sum of all similarities
-        iteration_count = 1
         flat_score = np.full(flat_cnt,0, dtype = 'float')
-
         proposed_flat = 0 # the first flat is proposed as no prior knowledge
-
-        flat_score = np.full(flat_cnt,0, dtype = 'float')
-        iteration_count += 1
 
         print('User please enter if you liked the proposed flat.')
         user_rating = input('Enter +1 for :) and -1 for :(') # Take the input from user and store it in variable user_rating
