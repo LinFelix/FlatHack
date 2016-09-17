@@ -38,8 +38,8 @@ def flat_dis(f1,n1,f2,n2):
     return sum
 
 # function for updating scores
-def update_score(flat_score, proposed_flat, flat, user_rating, img_cnt):
-    dis = flat_dis( proposed_flat, img_cnt[proposed_flat],  flat, img_cnt[flat])
+def update_score(flat_score, flat, user_rating):
+    dis = flat_dis( self.proposed_flat, self.img_cnt[self.proposed_flat],  flat, self.img_cnt[flat])
     return flat_score + user_rating*np.exp(-0.1*dis)
 
 
@@ -52,6 +52,22 @@ class GUI(Frame):
 
     def refresh_pic(self,path1,path2,path3):
         pass
+
+    def button_push(self,user_rating):
+
+        for f in range(0,self.flat_cnt):
+            self.flat_score[f] = update_score(self.flat_score[f], f, user_rating)
+
+        self.flats_seen = np.append(self.flats_seen, self.proposed_flat)
+        tmp_flat_score = np.copy(self.flat_score)
+        tmp_flat_score[self.flats_seen.astype(int)] = -2
+        self.proposed_flat = np.where( tmp_flat_score == tmp_flat_score.max() )[0][0]
+
+        path1 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"0.jpg"
+        path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
+        path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
+
+        refresh_pic(self,path1,path2,path3)
 
     def create_top_level(self):
         # the actual window
@@ -109,17 +125,17 @@ class GUI(Frame):
         response = r.read()
         data = json.loads(response)
 
-        flat_cnt = len(data["items"])
+        self.flat_cnt = len(data["items"])
 
-        img_cnt = numpy.full(flat_cnt,0,dtype=int)
-        for i in range(0,flat_cnt):
-            img_cnt[i] = len(data["items"][i]["pictures"])
+        self.img_cnt = numpy.full(self.flat_cnt,0,dtype=int)
+        for i in range(0,self.flat_cnt):
+            self.img_cnt[i] = len(data["items"][i]["pictures"])
         '''
         zcnt=0
-        for i in range(0,flat_cnt):
-            if(img_cnt[i]!=0):
+        for i in range(0,self.flat_cnt):
+            if(self.img_cnt[i]!=0):
                 print "flat: %d" % (i-zcnt)
-                for j in range(0,img_cnt[i]):
+                for j in range(0,self.img_cnt[i]):
                     req_img = urllib2.Request(data["items"][i]["pictures"][j])
                     res_img = urllib2.urlopen(req_img)
                     img = res_img.read()
@@ -132,15 +148,22 @@ class GUI(Frame):
             else:
                 zcnt=zcnt+1
         '''
-        flat_cnt = numpy.count_nonzero(img_cnt)
-        img_cnt = np.delete(img_cnt,np.where(img_cnt==0))
-
+        self.flat_cnt = numpy.count_nonzero(self.img_cnt)
+        self.img_cnt = np.delete(self.img_cnt,np.where(self.img_cnt==0))
+        
         # Initialization 
-        flats_seen = [] # id of the flat seen, 0 as the first flat is seen/proposed first in initialization
+        self.flats_seen = [] # id of the flat seen, 0 as the first flat is seen/proposed first in initialization
          # sum of all similarities
-        flat_score = np.full(flat_cnt,0, dtype = 'float')
-        proposed_flat = 0 # the first flat is proposed as no prior knowledge
+        self.flat_score = np.full(flat_cnt,0, dtype = 'float')
+        self.proposed_flat = 0 # the first flat is proposed as no prior knowledge
 
+        path1 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"0.jpg"
+        path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
+        path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
+
+        refresh_pic(self,path1,path2,path3)
+
+        '''
         print('User please enter if you liked the proposed flat.')
         user_rating = input('Enter +1 for :) and -1 for :(') # Take the input from user and store it in variable user_rating
 
@@ -158,7 +181,7 @@ class GUI(Frame):
 
             print('User please enter if you liked the proposed flat.')
             user_rating = input('Enter +1 for :) and -1 for :(')
-
+        '''
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.grid(row=0)
