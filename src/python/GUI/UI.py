@@ -38,17 +38,9 @@ def flat_dis(f1,n1,f2,n2):
     return sum
 
 # function for updating scores
-def update_score(flat_score, proposed_flat, flat, user_rating, sum, img_cnt):
+def update_score(flat_score, proposed_flat, flat, user_rating, img_cnt):
     dis = flat_dis( proposed_flat, img_cnt[proposed_flat],  flat, img_cnt[flat])
- #   if(np.isclose(sum,0.) and np.isclose(sim,0.)):
- #       print(proposed_flat, flat, flat_score)
- #   if(proposed_flat==0):
-  #      return flat_score + user_rating*sim, sum + sim
-   # else
-#    return ( flat_score + user_rating*np.exp(-dis) ), sum + np.exp(-dis)
-    # (sum + sim + np.finfo(float).eps), sum + sim
-    return flat_score + user_rating*np.exp(-0.1*dis), sum + np.exp(-0.1*dis)
-    #/ (sum + sim + np.finfo(float).eps), sum + sim 
+    return flat_score + user_rating*np.exp(-0.1*dis)
 
 
 class GUI(Frame):
@@ -57,6 +49,9 @@ class GUI(Frame):
         self.ownTitle = Label(master=self.top, underline=0,
                               text="Hackflat \n We show you the apartment you want to see", background="white")
         self.ownTitle.grid(row=1)
+
+    def refresh_pic(self,path1,path2,path3):
+        pass
 
     def create_top_level(self):
         # the actual window
@@ -120,25 +115,28 @@ class GUI(Frame):
         for i in range(0,flat_cnt):
             img_cnt[i] = len(data["items"][i]["pictures"])
         '''
-        for i in range(0,flat_cnt):       
-            print "flat: %d" % i
-            for j in range(0,img_cnt[i]):
-                req_img = urllib2.Request(data["items"][i]["pictures"][j])
-                res_img = urllib2.urlopen(req_img)
-                img = res_img.read()
-                imagefile = open("image_retrieval/images/"+str(i)+"_"+str(j)+".jpg","wb")
-                imagefile.write(img)
-                imagefile.close()
-                file = cStringIO.StringIO(img)
-                img = Image.open(file)
-                print str(i)+"_"+str(j)
+        zcnt=0
+        for i in range(0,flat_cnt):
+            if(img_cnt[i]!=0):
+                print "flat: %d" % (i-zcnt)
+                for j in range(0,img_cnt[i]):
+                    req_img = urllib2.Request(data["items"][i]["pictures"][j])
+                    res_img = urllib2.urlopen(req_img)
+                    img = res_img.read()
+                    imagefile = open("image_retrieval/images/"+str(i-zcnt)+"_"+str(j)+".jpg","wb")
+                    imagefile.write(img)
+                    imagefile.close()
+                    file = cStringIO.StringIO(img)
+                    img = Image.open(file)
+                print str(i-zcnt)+"_"+str(j)
+            else:
+                zcnt=zcnt+1
         '''
         flat_cnt = numpy.count_nonzero(img_cnt)
-        np.delete(img_cnt,img_cnt == 0)
+        img_cnt = np.delete(img_cnt,np.where(img_cnt==0))
 
         # Initialization 
         flats_seen = [] # id of the flat seen, 0 as the first flat is seen/proposed first in initialization
-        sum = np.full(flat_cnt,0, dtype = 'float')
          # sum of all similarities
         flat_score = np.full(flat_cnt,0, dtype = 'float')
         proposed_flat = 0 # the first flat is proposed as no prior knowledge
@@ -149,15 +147,14 @@ class GUI(Frame):
         while (len(flats_seen) != flat_cnt): # *** insert condition such that loop stops after every flat in the set has been seen
             # insert function that returns sum and flat_sim (flat_similarity vector) here
             for f in range(0,flat_cnt):
-                flat_score[f], sum[f] = update_score(flat_score[f], proposed_flat, f, user_rating, sum[f], img_cnt)
+                flat_score[f] = update_score(flat_score[f], proposed_flat, f, user_rating, img_cnt)
 
             # propose the next flat as one that has highest score and has not been proposed before
             flats_seen = np.append(flats_seen, proposed_flat)
-            tmp_flat_score = flat_score
-            tmp_flat_score[int(flats_seen)] = -2 
-            proposed_flat = np.where( tmp_flat_score == flat_score.max() )
+            tmp_flat_score = np.copy(flat_score)
+            tmp_flat_score[flats_seen.astype(int)] = -2
+            proposed_flat = np.where( tmp_flat_score == tmp_flat_score.max() )[0][0]
 
-            print flat_score
 
             print('User please enter if you liked the proposed flat.')
             user_rating = input('Enter +1 for :) and -1 for :(')
