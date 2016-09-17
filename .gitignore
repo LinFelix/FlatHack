@@ -89,3 +89,4 @@ ENV/
 .ropeproject
 
 .idea/*
+src/python/GUI/image_retrieval/images/*
