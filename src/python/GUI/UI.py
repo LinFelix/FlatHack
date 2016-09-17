@@ -155,9 +155,11 @@ class GUI(Frame):
         for i in range(0,self.flat_cnt):
             self.img_cnt[i] = len(data["items"][i]["pictures"])
         
+        minImgNum = 5
+        '''
         zcnt=0
         for i in range(0,self.flat_cnt):
-            if(self.img_cnt[i]>=3):
+            if(self.img_cnt[i]>=minImgNum):
                 print "flat: %d" % (i-zcnt)
                 for j in range(0,self.img_cnt[i]):
                     req_img = urllib2.Request(data["items"][i]["pictures"][j])
@@ -168,12 +170,13 @@ class GUI(Frame):
                     imagefile.close()
                     file = cStringIO.StringIO(img)
                     img = Image.open(file)
-                print str(i-zcnt)+"_"+str(j)
+                #print str(i-zcnt)+"_"+str(j)
             else:
                 zcnt=zcnt+1
+        '''
         
-        self.flat_cnt = len(np.where(self.img_cnt>=3)[0]) #numpy.count_nonzero(self.img_cnt)
-        self.img_cnt = np.delete(self.img_cnt,np.where(self.img_cnt<3))
+        self.flat_cnt = len(np.where(self.img_cnt>=minImgNum)[0]) #numpy.count_nonzero(self.img_cnt)
+        self.img_cnt = np.delete(self.img_cnt,np.where(self.img_cnt<minImgNum))
         
         # Initialization 
         self.flats_seen = [] # id of the flat seen, 0 as the first flat is seen/proposed first in initialization
