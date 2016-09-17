@@ -1,0 +1,4 @@
+https://homegate.3scale.net/docs
+
+auth key: 7567b660d6cf89544516cda0afc63a38
+
