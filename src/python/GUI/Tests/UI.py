@@ -39,11 +39,16 @@ class GUI(Frame):
         self.roomMaxEntry = Entry(master=self.top, background="white")
         self.roomMaxEntry.pack()
         self.confirmationButton = Button(master=self.top, text="I want to SEE apartments",
-                                         command=self.collect_user_input())
+                                         command=self.collect_user_input)
         self.confirmationButton.pack()
 
     def collect_user_input(self):
-        pass
+        self.city = self.cityEntry.get()
+        self.minPrice = self.priceMinEntry.get()
+        self.maxPrice = self.priceMaxEntry.get()
+        self.minRoom = self.roomMinEntry.get()
+        self.maxRoom = self.roomMaxEntry.get()
+        print(self.city, self.minPrice, self.maxPrice, self.minRoom, self.maxRoom)
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
