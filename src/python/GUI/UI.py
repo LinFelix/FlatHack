@@ -4,7 +4,7 @@ from Tkinter import *
 
 import urllib2
 import json
-import Image
+from PIL import Image
 import cStringIO
 import photohash
 import imagehash
