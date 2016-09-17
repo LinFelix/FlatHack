@@ -38,8 +38,9 @@ queryFeatures = desc.describe(queryImage)
 index = cPickle.loads(open(args["index"]).read())
 searcher = Searcher(index)
 results = searcher.search(queryFeatures)
+print results
 
-# initialize the two montages to display our results --
+'''# initialize the two montages to display our results --
 # we have a total of 25 images in the index, but let's only
 # display the top 10 results; 5 images per montage, with
 # images that are 400x166 pixels
@@ -66,4 +67,4 @@ for j in xrange(0, 10):
 # show the results
 cv2.imshow("Results 1-5", montageA)
 cv2.imshow("Results 6-10", montageB)
-cv2.waitKey(0)
+cv2.waitKey(0)'''
