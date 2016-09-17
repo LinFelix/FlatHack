@@ -18,6 +18,37 @@ import cPickle
 import cv2
 import glob
 
+def mi(i,f):
+    return i
+
+def img_dis(f1,i1,f2,i2):
+    index = {}
+    desc = RGBHistogram([8, 8, 8])
+    path1 = "image_retrieval/images/"+str(f1)+"_"+str(i1)+".jpg"
+    feat1 = desc.describe(cv2.imread(path1))
+    feat2 = desc.describe(cv2.imread("image_retrieval/images/"+str(f2)+"_"+str(i2)+".jpg"))
+    index[path1] = feat1
+    results = Searcher(index).search(feat2)
+    return results[0][0]
+
+def flat_dis(f1,n1,f2,n2):
+    sum=0
+    for i in range(0,min(n1,n2)):
+        sum=sum+img_dis( f1, mi(i,f1), f2, mi(i,f2) )
+    return sum
+
+# function for updating scores
+def update_score(flat_score, proposed_flat, flat, user_rating, sum, img_cnt):
+    dis = flat_dis( proposed_flat, img_cnt[proposed_flat],  flat, img_cnt[flat])
+ #   if(np.isclose(sum,0.) and np.isclose(sim,0.)):
+ #       print(proposed_flat, flat, flat_score)
+ #   if(proposed_flat==0):
+  #      return flat_score + user_rating*sim, sum + sim
+   # else
+    return ( flat_score + user_rating*np.exp(-dis) ), sum + np.exp(-dis)
+    #/ (sum + sim + np.finfo(float).eps), sum + sim 
+
+
 class GUI(Frame):
 
     def add_own_title(self):
@@ -64,7 +95,6 @@ class GUI(Frame):
         self.minRoom = self.roomMinEntry.get()
         self.maxRoom = self.roomMaxEntry.get()
         print(self.city, self.minPrice, self.maxPrice, self.minRoom, self.maxRoom)
-        print "first step"
 
         url = "https://api-2445581357976.apicast.io:443/rs/real-estates?language=en&chooseType=rentflat&"+ \
         "sort=p&page=1&numberResults=1000"+ \
@@ -73,7 +103,6 @@ class GUI(Frame):
         "&rentTo="+str(gui.maxPrice)+ \
         "&roomsFrom="+str(gui.minRoom)+ \
         "&roomsTo="+str(gui.maxRoom)
-        print url
 
         req = urllib2.Request(url)
         req.add_header("Accept","application/json")
@@ -83,13 +112,13 @@ class GUI(Frame):
         response = r.read()
         data = json.loads(response)
 
-        print "got data"
-
         flat_cnt = len(data["items"])
 
         img_cnt = numpy.full((flat_cnt),0,dtype=int)
         for i in range(0,flat_cnt):
             img_cnt[i] = len(data["items"][i]["pictures"])
+
+        '''
 
         hashes = [[] for i in range(flat_cnt)]
 
@@ -106,6 +135,38 @@ class GUI(Frame):
                 img = Image.open(file)
                 hashes[i].append(int(str(imagehash.average_hash(img)),16))
                 print "hash" + " = " + str(hashes[i][j])
+        '''
+
+        # Initialization 
+        flats_seen = [] # id of the flat seen, 0 as the first flat is seen/proposed first in initialization
+        sum = np.full(flat_cnt,0, dtype = 'float')
+         # sum of all similarities
+        iteration_count = 1
+        flat_score = np.full(flat_cnt,0, dtype = 'float')
+
+        proposed_flat = 0 # the first flat is proposed as no prior knowledge
+
+        flat_score = np.full(flat_cnt,0, dtype = 'float')
+        iteration_count += 1
+
+        print('User please enter if you liked the proposed flat.')
+        user_rating = input('Enter +1 for :) and -1 for :(') # Take the input from user and store it in variable user_rating
+
+        while (len(flats_seen) != flat_cnt): # *** insert condition such that loop stops after every flat in the set has been seen
+            # insert function that returns sum and flat_sim (flat_similarity vector) here
+            for f in range(0,flat_cnt):
+                flat_score[f], sum[f] = update_score(flat_score[f], proposed_flat, f, user_rating, sum[f], img_cnt)
+
+            # propose the next flat as one that has highest score and has not been proposed before
+            flats_seen = np.append(flats_seen, proposed_flat)
+            tmp_flat_score = flat_score
+            tmp_flat_score[int(flats_seen)] = -2 
+            proposed_flat = np.where( tmp_flat_score == flat_score.max() )
+
+            print flat_score
+
+            print('User please enter if you liked the proposed flat.')
+            user_rating = input('Enter +1 for :) and -1 for :(')
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -114,22 +175,7 @@ class GUI(Frame):
         self.add_own_title()
         self.create_parameter_request()
 
-
-def mi(i,f):
-    return i
-
-def img_sim(f1,i1,f2,i2):
-    desc = RGBHistogram([8, 8, 8])
-    feat1 = desc.describe(cv2.imread("image_retrieval/images/"+str(f1)+"_"+str(i1)+".jpg"))
-    feat2 = desc.describe(cv2.imread("image_retrieval/images/"+str(f2)+"_"+str(i2)+".jpg"))
-    (score, imgname) = Searcher(feat1).search(feat2)
-    return score
-
-def flat_sim(f1,n1,f2,n2):
-    sum=0
-    for i in range(0,min(n1,n2)):
-        sum=sum+img_sim( f1, mi(i,f1), f2, mi(i,f2) )
-    return sum
+# MAIN #########
 
 if __name__ == '__main__':
 
