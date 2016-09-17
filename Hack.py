@@ -4,24 +4,24 @@ import imagehash
 import photohash
 from imagehash import average_hash
 from scipy.ndimage.interpolation import zoom
+from scipy import misc
 
-std_width = 2000
-std_height = 2000
+std_width = 1500.0
+std_height = 1500.0
 Hash = np.full((6), 0, dtype = 'object')
 
-filename = "1.jpeg"
-with Image.open(filename) as im:
-    width, height = im.size
+filename = misc.imread('1.jpeg')
+print filename.shape
 
-print std_width/width
-print std_height/height
+#with Image.open(filename) as im:
+#    width, height = im.size
 
-exit()
+zoom_x = float(std_width)/float(filename.shape[0])
+zoom_y = float(std_height)/float(filename.shape[1])
+print zoom_x, zoom_y
 
-
-print width, height
-new_image = zoom(filename, (float(std_width/width), float(std_height/height) ), output=None, order=3, mode='constant', cval=0.0, prefilter=True)
-
+new_image = zoom(filename, (zoom_x,zoom_y,1), order=3, mode='constant', cval=0.0, prefilter=True)
+#new_image.show()
 exit()
 Hash[0] = average_hash(Image.open('1.jpeg'))
 Hash[1] = average_hash(Image.open('2.jpeg'))
