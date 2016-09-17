@@ -30,7 +30,7 @@ index = {}
 desc = RGBHistogram([8, 8, 8])
 
 # use glob to grab the image paths and loop over them
-for imagePath in glob.glob(args["dataset"] + "/*.png"):
+for imagePath in glob.glob(args["dataset"] + "/*.jpg"):
 	# extract our unique image ID (i.e. the filename)
 	k = imagePath[imagePath.rfind("/") + 1:]
 
