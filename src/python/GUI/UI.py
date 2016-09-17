@@ -4,7 +4,7 @@ from Tkinter import *
 
 import urllib2
 import json
-from PIL import Image
+from PIL import Image, ImageTk
 import cStringIO
 import photohash
 import imagehash
@@ -50,8 +50,14 @@ class GUI(Frame):
                               text="Hackflat \n We show you the apartment you want to see", background="white")
         self.ownTitle.grid(row=1)
 
-    def refresh_pic(self,path1,path2,path3):
-        pass
+    def refresh_pic(self, path1, path2, path3):
+        self.leftImage = Image.open(path1)
+        self.leftPhoto = ImageTk.PhotoImage(self.leftImage)
+        self.leftPicLabel = Label(image=self.leftPhoto)
+        self.leftPicLabel.image=self.leftPhoto
+        self.leftPicLabel.grid(row=6, column=0, columnspan=3, rawspan=3)
+        #TODO
+
 
     def create_top_level(self):
         # the actual window
