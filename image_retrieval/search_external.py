@@ -25,7 +25,7 @@ args = vars(ap.parse_args())
 
 # load the query image and show it
 queryImage = cv2.imread(args["query"])
-cv2.imshow("Query", queryImage)
+#cv2.imshow("Query", queryImage)
 print "query: %s" % (args["query"])
 
 # describe the query in the same way that we did in
@@ -44,8 +44,8 @@ print results
 # we have a total of 25 images in the index, but let's only
 # display the top 10 results; 5 images per montage, with
 # images that are 400x166 pixels
-montageA = np.zeros((166 * 5, 400, 3), dtype = "uint8")
-montageB = np.zeros((166 * 5, 400, 3), dtype = "uint8")
+#montageA = np.zeros((166 * 5, 400, 3), dtype = "uint8")
+#montageB = np.zeros((166 * 5, 400, 3), dtype = "uint8")
 
 # loop over the top ten results
 for j in xrange(0, 10):
@@ -57,14 +57,20 @@ for j in xrange(0, 10):
 	print "\t%d. %s : %.3f" % (j + 1, imageName, score)
 
 	# check to see if the first montage should be used
-	if j < 5:
-		montageA[j * 166:(j + 1) * 166, :] = result
+	#if j < 5:
+	#	montageA[j * 166:(j + 1) * 166, :] = result
 
 	# otherwise, the second montage should be used
-	else:
-		montageB[(j - 5) * 166:((j - 5) + 1) * 166, :] = result
+	#else:
+	#	montageB[(j - 5) * 166:((j - 5) + 1) * 166, :] = result
 
 # show the results
+<<<<<<< HEAD
 cv2.imshow("Results 1-5", montageA)
 cv2.imshow("Results 6-10", montageB)
 cv2.waitKey(0)'''
+=======
+#cv2.imshow("Results 1-5", montageA)
+#cv2.imshow("Results 6-10", montageB)
+cv2.waitKey(0)
+>>>>>>> 77c3e128624ca6eb2c519cdccd0aa152984da3bd
