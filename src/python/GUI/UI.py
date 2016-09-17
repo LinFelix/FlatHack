@@ -38,8 +38,8 @@ def flat_dis(f1,n1,f2,n2):
     return sum
 
 # function for updating scores
-def update_score(flat_score, flat, user_rating):
-    dis = flat_dis( self.proposed_flat, self.img_cnt[self.proposed_flat],  flat, self.img_cnt[flat])
+def update_score(flat_score, proposed_flat, img_cnt_proposed_flat, flat, img_cnt_flat, user_rating):
+    dis = flat_dis( proposed_flat, img_cnt_proposed_flat,  flat, img_cnt_flat)
     return flat_score + user_rating*np.exp(-0.1*dis)
 
 
@@ -70,7 +70,7 @@ class GUI(Frame):
     def button_push(self,user_rating):
 
         for f in range(0,self.flat_cnt):
-            self.flat_score[f] = update_score(self.flat_score[f], f, user_rating)
+            self.flat_score[f] = update_score(self.flat_score[f], self.proposed_flat, self.img_cnt[self.proposed_flat], f, self.img_cnt[f], user_rating)
 
         self.flats_seen = np.append(self.flats_seen, self.proposed_flat)
         tmp_flat_score = np.copy(self.flat_score)
