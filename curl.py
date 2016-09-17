@@ -1,5 +1,5 @@
 import urllib2
-import urllib
+#import urllib
 import json
 import Image
 import cStringIO
@@ -27,11 +27,14 @@ hashes = [[] for i in range(flat_cnt)]
 for i in range(0,flat_cnt):
 	print "flat: %d" % i
 	for j in range(0,img_cnt[i]):
-		urllib.urlretrieve(data["items"][i]["pictures"][j],"/image_retrieval/images/"+str(i)+"_"+str(j)+".jpg")
 		req_img = urllib2.Request(data["items"][i]["pictures"][j])
 		res_img = urllib2.urlopen(req_img)
 		img = res_img.read()
+		imagefile = open("image_retrieval/images/"+str(i)+"_"+str(j)+".jpg","wb")
+		imagefile.write(img)
+		imagefile.close()
 		file = cStringIO.StringIO(img)
 		img = Image.open(file)
 		hashes[i].append(int(str(imagehash.average_hash(img)),16))
 		print "hash" + " = " + str(hashes[i][j])
+
