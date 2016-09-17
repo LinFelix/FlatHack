@@ -64,6 +64,7 @@ class GUI(Frame):
         self.minRoom = self.roomMinEntry.get()
         self.maxRoom = self.roomMaxEntry.get()
         print(self.city, self.minPrice, self.maxPrice, self.minRoom, self.maxRoom)
+        print "first step"
 
         url = "https://api-2445581357976.apicast.io:443/rs/real-estates?language=en&chooseType=rentflat&"+ \
         "sort=p&page=1&numberResults=1000"+ \
@@ -72,6 +73,7 @@ class GUI(Frame):
         "&rentTo="+str(gui.maxPrice)+ \
         "&roomsFrom="+str(gui.minRoom)+ \
         "&roomsTo="+str(gui.maxRoom)
+        print url
 
         req = urllib2.Request(url)
         req.add_header("Accept","application/json")
@@ -81,6 +83,7 @@ class GUI(Frame):
         response = r.read()
         data = json.loads(response)
 
+        print "got data"
 
         flat_cnt = len(data["items"])
 
