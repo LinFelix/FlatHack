@@ -48,7 +48,7 @@ class GUI(Frame):
     def add_own_title(self):
         self.ownTitle = Label(master=self.top, underline=0,
                               text="Hackflat \n We show you the apartment you want to see", background="white")
-        self.ownTitle.pack()
+        self.ownTitle.grid(row=1)
 
     def refresh_pic(self,path1,path2,path3):
         pass
@@ -78,28 +78,28 @@ class GUI(Frame):
 
     def create_parameter_request(self):
         self.cityLabel = Label(master=self.top, background="white", height=1, text="Apartment is in: ")
-        self.cityLabel.pack()
+        self.cityLabel.grid(row=2)
         self.cityEntry = Entry(master=self.top, background="white")
-        self.cityEntry.pack()
+        self.cityEntry.grid(row=2, column=1)
         self.priceLabel = Label(master=self.top, background="white", text="The price might range from (CHF)")
-        self.priceLabel.pack()
+        self.priceLabel.grid(row=3)
         self.priceMinEntry = Entry(master=self.top, background="white")
-        self.priceMinEntry.pack()
+        self.priceMinEntry.grid(row=3, column=1)
         self.priceSeperatorLabel = Label(master=self.top, background="white", text="up to ")
-        self.priceSeperatorLabel.pack()
+        self.priceSeperatorLabel.grid(row=3, column=2)
         self.priceMaxEntry = Entry(master=self.top, background="white")
-        self.priceMaxEntry.pack()
+        self.priceMaxEntry.grid(row=3, column=3)
         self.roomLabel = Label(master=self.top, background="white", text="The apartment has at least")
-        self.roomLabel.pack()
+        self.roomLabel.grid(row=4)
         self.roomMinEntry = Entry(master=self.top, background="white")
-        self.roomMinEntry.pack()
+        self.roomMinEntry.grid(row=4, column=1)
         self.roomSeperatorLabel = Label(master=self.top, background="white", text="rooms, but no more then")
-        self.roomSeperatorLabel.pack()
+        self.roomSeperatorLabel.grid(row=4, column=2)
         self.roomMaxEntry = Entry(master=self.top, background="white")
-        self.roomMaxEntry.pack()
+        self.roomMaxEntry.grid(row=4, column=3)
         self.confirmationButton = Button(master=self.top, text="I want to SEE apartments",
                                          command=self.collect_user_input)
-        self.confirmationButton.pack()
+        self.confirmationButton.grid(row=5,column=3)
 
     def collect_user_input(self):
         self.city = self.cityEntry.get()
@@ -184,7 +184,7 @@ class GUI(Frame):
         '''
     def __init__(self, master=None):
         Frame.__init__(self, master)
-        self.pack()
+        self.grid(row=0)
         self.create_top_level()
         self.add_own_title()
         self.create_parameter_request()
