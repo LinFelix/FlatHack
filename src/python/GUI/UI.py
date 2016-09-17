@@ -115,12 +115,22 @@ class GUI(Frame):
                                          command=self.collect_user_input)
         self.confirmationButton.grid(row=5,column=3)
 
+    def dislikebutton(self):
+        self.button_push(-1)
+
+    def likebutton(self):
+        self.button_push(1)
+
     def collect_user_input(self):
         self.city = self.cityEntry.get()
         self.minPrice = self.priceMinEntry.get()
         self.maxPrice = self.priceMaxEntry.get()
         self.minRoom = self.roomMinEntry.get()
         self.maxRoom = self.roomMaxEntry.get()
+        self.dislikeButton = Button(master=self.top, text="DISLIKE", command=self.dislikebutton,
+                                    width=30, height=5).grid(row=8, column=0)
+        self.likeButton = Button(master=self.top, text="LIKE", command=self.likebutton, width=30,
+                                 height=5).grid(row=8, column=4)
         print(self.city, self.minPrice, self.maxPrice, self.minRoom, self.maxRoom)
 
         url = "https://api-2445581357976.apicast.io:443/rs/real-estates?language=en&chooseType=rentflat&"+ \
