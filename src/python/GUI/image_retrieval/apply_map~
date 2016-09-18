@@ -1,1 +1,11 @@
 #!/bin/bash
+
+OLDIFS=$IFS
+IFS=,
+tail -n+1 map.csv | while read flat img tag
+do
+	echo 
+	cp images/$flat"_"$img.jpg labeled_images/$flat"_"$tag.jpg
+	cp features/$flat"_"$img.npy labeled_features/$flat"_"$tag.npy
+done
+IFS=$OLDIFS

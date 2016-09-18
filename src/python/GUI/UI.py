@@ -17,30 +17,36 @@ import argparse
 import cPickle
 import cv2
 import glob
+import os
 
-def mi(i,f):
-    return i
+def img_dis(f1,f2,i):
 
-def img_dis(f1,i1,f2,i2):
-    index = {}
-    desc = RGBHistogram([8, 8, 8])
-    path1 = "image_retrieval/images/"+str(f1)+"_"+str(i1)+".jpg"
-    feat1 = desc.describe(cv2.imread(path1))
-    feat2 = desc.describe(cv2.imread("image_retrieval/images/"+str(f2)+"_"+str(i2)+".jpg"))
-    index[path1] = feat1
-    results = Searcher(index).search(feat2)
-    return results[0][0]
+    err=0
 
-def flat_dis(f1,n1,f2,n2):
+    path1 = "image_retrieval/labeled_features/"+str(f1)+"_"+str(i)+".npy"
+    if(os.path.exists(path1)):
+        vec1=np.load(path1)
+    else:
+        err=1
+
+    path2 = "image_retrieval/labeled_features/"+str(f2)+"_"+str(i)+".npy"
+    if os.path.exists(path2) and err==0:
+        vec2=np.load(path2)
+        return np.sum(np.power(np.ndarray.flatten(vec1-vec2),2))
+    else:
+        return 0.0
+
+def flat_dis(f1,f2):
     sum=0
-    for i in range(0,min(n1,n2)):
-        sum=sum+img_dis( f1, mi(i,f1), f2, mi(i,f2) )
+    for i in range(0,2):
+        sum=sum+img_dis( f1, f2, i )
     return sum
 
 # function for updating scores
-def update_score(flat_score, proposed_flat, img_cnt_proposed_flat, flat, img_cnt_flat, user_rating):
-    dis = flat_dis( proposed_flat, img_cnt_proposed_flat,  flat, img_cnt_flat)
-    return flat_score + user_rating*np.exp(-0.1*dis)
+def update_score(flat_score, proposed_flat, flat, user_rating):
+    dis = flat_dis( proposed_flat, flat)
+    print dis
+    return flat_score + user_rating*np.exp(-5*10e-7*dis)
 
 
 class GUI(Frame):
@@ -70,7 +76,7 @@ class GUI(Frame):
     def button_push(self,user_rating):
 
         for f in range(0,self.flat_cnt):
-            self.flat_score[f] = update_score(self.flat_score[f], self.proposed_flat, self.img_cnt[self.proposed_flat], f, self.img_cnt[f], user_rating)
+            self.flat_score[f] = update_score(self.flat_score[f], self.proposed_flat, f, user_rating)
 
         self.flats_seen = np.append(self.flats_seen, self.proposed_flat)
         tmp_flat_score = np.copy(self.flat_score)
@@ -164,6 +170,7 @@ class GUI(Frame):
         
         minImgNum = 5
         
+        '''
         zcnt=0
         for i in range(0,self.flat_cnt):
             if(self.img_cnt[i]>=minImgNum):
@@ -180,7 +187,7 @@ class GUI(Frame):
                 #print str(i-zcnt)+"_"+str(j)
             else:
                 zcnt=zcnt+1
-        
+        '''
         
         self.flat_cnt = len(np.where(self.img_cnt>=minImgNum)[0]) #numpy.count_nonzero(self.img_cnt)
         self.img_cnt = np.delete(self.img_cnt,np.where(self.img_cnt<minImgNum))
@@ -204,25 +211,6 @@ class GUI(Frame):
 
         self.refresh_pic(path1,path2,path3)
 
-        '''
-        print('User please enter if you liked the proposed flat.')
-        user_rating = input('Enter +1 for :) and -1 for :(') # Take the input from user and store it in variable user_rating
-
-        while (len(flats_seen) != flat_cnt): # *** insert condition such that loop stops after every flat in the set has been seen
-            # insert function that returns sum and flat_sim (flat_similarity vector) here
-            for f in range(0,flat_cnt):
-                flat_score[f] = update_score(flat_score[f], proposed_flat, f, user_rating, img_cnt)
-
-            # propose the next flat as one that has highest score and has not been proposed before
-            flats_seen = np.append(flats_seen, proposed_flat)
-            tmp_flat_score = np.copy(flat_score)
-            tmp_flat_score[flats_seen.astype(int)] = -2
-            proposed_flat = np.where( tmp_flat_score == tmp_flat_score.max() )[0][0]
-
-
-            print('User please enter if you liked the proposed flat.')
-            user_rating = input('Enter +1 for :) and -1 for :(')
-        '''
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.grid(row=0)
