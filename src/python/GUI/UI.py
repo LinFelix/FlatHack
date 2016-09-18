@@ -77,9 +77,16 @@ class GUI(Frame):
         tmp_flat_score[self.flats_seen.astype(int)] = -2
         self.proposed_flat = np.where( tmp_flat_score == tmp_flat_score.max() )[0][0]
 
-        path1 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"0.jpg"
-        path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
-        path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
+        path1 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"0.jpg"
+        path2 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"1.jpg"
+        path3 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"2.jpg"
+
+        if(not os.path.exists(path1)):
+            path1 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"0.jpg"
+        if(not os.path.exists(path2)):
+            path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
+        if(not os.path.exists(path3)):
+            path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
 
         self.refresh_pic(path1, path2, path3)
 
@@ -184,9 +191,16 @@ class GUI(Frame):
         self.flat_score = np.full(self.flat_cnt, 0, dtype='float')
         self.proposed_flat = 0 # the first flat is proposed as no prior knowledge
 
-        path1 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"0.jpg"
-        path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
-        path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
+        path1 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"0.jpg"
+        path2 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"1.jpg"
+        path3 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"2.jpg"
+
+        if(not os.path.exists(path1)):
+            path1 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"0.jpg"
+        if(not os.path.exists(path2)):
+            path2 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"1.jpg"
+        if(not os.path.exists(path3)):
+            path3 = "image_retrieval/images/"+str(self.proposed_flat)+"_"+"2.jpg"
 
         self.refresh_pic(path1,path2,path3)
 

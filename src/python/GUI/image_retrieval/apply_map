@@ -1,0 +1,11 @@
+#!/bin/bash
+
+OLDIFS=$IFS
+IFS=,
+tail -n+1 map1 | while read flat img tag
+
+
+
+do
+done
+IFS=$OLDIFS
