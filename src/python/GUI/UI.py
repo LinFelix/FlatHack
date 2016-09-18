@@ -45,7 +45,6 @@ def flat_dis(f1,f2):
 # function for updating scores
 def update_score(flat_score, proposed_flat, flat, user_rating):
     dis = flat_dis( proposed_flat, flat)
-    print dis
     return flat_score + user_rating*np.exp(-5*10e-7*dis)
 
 
@@ -82,6 +81,8 @@ class GUI(Frame):
         tmp_flat_score = np.copy(self.flat_score)
         tmp_flat_score[self.flats_seen.astype(int)] = -2
         self.proposed_flat = np.where( tmp_flat_score == tmp_flat_score.max() )[0][0]
+
+        print self.flat_score
 
         path1 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"0.jpg"
         path2 = "image_retrieval/labeled_images/"+str(self.proposed_flat)+"_"+"1.jpg"
